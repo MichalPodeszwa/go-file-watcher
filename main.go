@@ -11,12 +11,12 @@ import (
 )
 
 func handleFileCreated(people chan entities.Person, fileName string) {
-	people <- readers.ReadFile(fileName)
+	go readers.ReadFile(fileName, people)
 }
 
 func handlePersonCreated(people chan entities.Person, outputDir string, outputType string) {
 	for person := range people {
-		outputers.CreateFile(person, outputDir, outputType)
+		go outputers.CreateFile(person, outputDir, outputType)
 	}
 }
 

@@ -10,14 +10,18 @@ import (
 
 type csvReader struct{}
 
-func (reader csvReader) ConvertToPerson(fileData []byte) entities.Person {
+func (reader csvReader) readSinglePerson(person []string) entities.Person {
+	age, _ := strconv.ParseInt(person[2], 10, 64)
+
+	return entities.Person{FirstName: person[0], LastName: person[1], Age: age}
+}
+
+func (reader csvReader) AddPeopleToChan(fileData []byte, people chan entities.Person) {
 	r := csv.NewReader(bytes.NewReader(fileData))
 	r.Comma = ';'
-	csvPerson, _ := r.Read()
+	csvPeople, _ := r.ReadAll()
 
-	age, _ := strconv.ParseInt(csvPerson[2], 10, 64)
-
-	person := entities.Person{FirstName: csvPerson[0], LastName: csvPerson[1], Age: age}
-
-	return person
+	for _, person := range csvPeople {
+		people <- reader.readSinglePerson(person)
+	}
 }

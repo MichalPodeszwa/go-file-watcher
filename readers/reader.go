@@ -10,7 +10,7 @@ import (
 )
 
 type fileReader interface {
-	ConvertToPerson(fileData []byte) entities.Person
+	AddPeopleToChan(fileData []byte, people chan entities.Person)
 }
 
 func getCorrectReader(fileName string) fileReader {
@@ -33,11 +33,11 @@ func openFile(fileName string) []byte {
 }
 
 // ReadFile is used to read from file and then to parse it in correct way, returning a Person
-func ReadFile(fileName string) entities.Person {
+func ReadFile(fileName string, people chan entities.Person) {
 	log.Println("Reading file:", fileName)
 	reader := getCorrectReader(fileName)
 
 	fileData := openFile(fileName)
 
-	return reader.ConvertToPerson(fileData)
+	reader.AddPeopleToChan(fileData, people)
 }
